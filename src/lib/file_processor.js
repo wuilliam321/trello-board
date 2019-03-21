@@ -1,0 +1,17 @@
+import fs from 'fs';
+
+export default class FileProcessor {
+  fileUri = '';
+
+  readFile() {
+    return new Promise((resolve, reject) => {
+      fs.readFile(this.fileUri, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(data);
+        }
+      });
+    })
+  }
+}
