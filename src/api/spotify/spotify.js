@@ -1,4 +1,5 @@
 import {
+  SPOTIFY_API_URL,
   SPOTIFY_ACCOUNTS_API_URL,
   SPOTIFY_CLIENT_ID,
   SPOTIFY_CLIENT_SECRET
@@ -7,6 +8,7 @@ import querystring from 'querystring';
 import Base from '../base';
 
 export default class Spotify extends Base {
+  apiUrl = SPOTIFY_API_URL;
   spotifyAccountsUrl = SPOTIFY_ACCOUNTS_API_URL;
   params = {};
   headers = {
@@ -15,6 +17,7 @@ export default class Spotify extends Base {
   };
 
   async checkClientAuthorization() {
+    try {
     // TODO: Check if token is alive or request a refresh
     const url = this.spotifyAccountsUrl + 'token';
     const data = {grant_type: 'client_credentials'};
@@ -25,12 +28,15 @@ export default class Spotify extends Base {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Accept': 'application/json'
     };
-    const response = await this.post(url, querystring.encode(data), headers);
+      const response = await this.post(url, querystring.encode(data), headers);
+      if (response.data && response.data.access_token) {
+        this.setToken(response.data.access_token)
+      }
 
-    if (response.data && response.data.access_token) {
-      this.setToken(response.data.access_token)
+      return response.data;
+    } catch (e) {
+      console.error(e);
     }
-    return response;
   }
 
   setToken(token) {

@@ -1,38 +1,43 @@
 import axios from 'axios';
 
 export default class Base {
-  get(url, params = null, headers = null) {
+  async get(url, params = null, headers = null) {
     try {
-      return axios.get(url, { params, headers })
-        .catch(console.error);
+      return await axios.get(url, { params, headers });
     } catch (e) {
       console.error(e);
     }
   }
 
-  post(url, data = null, headers = null) {
+  async post(url, data = null, headers = null, retries = 5) {
     try {
-      return axios.post(url, data, {headers})
-        .catch(console.error);
+      return await axios.post(url, data, {headers});
     } catch (e) {
+      console.log('Error retrying: ' + retries);
+      if (retries > 0) {
+        console.log('Retry: ' + retries);
+        try {
+          await this.post(url, data, headers,retries - 1);
+        } catch (e) {
+          console.error(e);
+        }
+      }
       console.error(e);
     }
 
   }
 
-  put(url, data = null, headers = null) {
+  async put(url, data = null, headers = null) {
     try {
-      return axios.put(url, data, {headers})
-        .catch(console.error);
+      return await axios.put(url, data, {headers});
     } catch (e) {
       console.error(e);
     }
   }
 
-  delete(url, headers = null) {
+  async delete(url, headers = null) {
     try {
-      return axios.delete(url, {headers})
-        .catch(console.error);
+      return await axios.delete(url, {headers});
     } catch (e) {
       console.error(e);
     }

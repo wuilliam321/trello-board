@@ -15,7 +15,7 @@ module.exports = {
   // cacheDirectory: "/private/var/folders/24/ccwlp66j1mz_bbw5c51ql8f40000gn/T/jest_dx",
 
   // Automatically clear mock calls and instances between every test
-  // clearMocks: true,
+  clearMocks: true,
 
   // Indicates whether the coverage information should be collected while executing the test
   // collectCoverage: false,
@@ -24,7 +24,7 @@ module.exports = {
   // collectCoverageFrom: null,
 
   // The directory where Jest should output its coverage files
-  // coverageDirectory: null,
+  coverageDirectory: "coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
   // coveragePathIgnorePatterns: [
@@ -113,7 +113,7 @@ module.exports = {
 
   // A list of paths to directories that Jest should use to search for files in
   roots: [
-    "src/"
+    "<rootDir>/src"
   ],
 
   // Allows you to use a custom runner instead of Jest's default test runner

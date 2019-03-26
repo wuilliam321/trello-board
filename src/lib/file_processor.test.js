@@ -15,7 +15,7 @@ describe('File Processor', () => {
       file = await fp.readFile();
     });
 
-    test('It should exists', () => {
+    it('should exists', () => {
       expect(file).not.toBe(null);
       expect(file.length).toBeGreaterThan(0);
     });

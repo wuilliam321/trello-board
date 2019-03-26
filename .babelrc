@@ -14,5 +14,5 @@
     }]
   ],
   "sourceMaps": "both",
-  "ignore": ["dist/*.test.js"]
+  "ignore": ["dist/**/*.test.js"]
 }

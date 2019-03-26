@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "npm run build && jest --collect-coverage",
     "start": "npm run build && node dist/index.js",
     "build": "rm -rf dist/* && babel src --out-dir dist -s -q"
   },
