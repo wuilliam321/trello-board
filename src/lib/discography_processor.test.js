@@ -10,7 +10,7 @@ describe('Discography Processor', () => {
 
   describe('when processing discography', () => {
     let albumsMock;
-    beforeAll(() => {
+    beforeAll(async done => {
       albumsMock = [
         {
           title: 'Test',
@@ -19,19 +19,20 @@ describe('Discography Processor', () => {
         }
       ];
       dp.albums = albumsMock;
-      spyOn(dp, 'getArtistDiscographyFileData').and.returnValue(['test', 'test']);
-      spyOn(dp, 'prepareAlbumsWithYears').and.returnValue(albumsMock);
-      spyOn(dp, 'prepareDecades');
-      spyOn(dp, 'createTrelloBoard');
+      spyOn(dp, 'readFile').and.returnValue(['test', 'test']);
+      spyOn(dp, 'initializeAlbumsWithYears').and.returnValue(albumsMock);
+      spyOn(dp, 'setAlbumsDecades');
+      spyOn(dp, 'createDiscographyBoard');
 
-      dp.processDiscography();
+      await dp.processDiscography();
+      done();
     });
 
     it('should prepare albums', () => {
-      expect(dp.getArtistDiscographyFileData).toBeCalled();
-      expect(dp.prepareAlbumsWithYears).toBeCalled();
-      expect(dp.prepareDecades).toBeCalled();
-      expect(dp.createTrelloBoard).toBeCalled();
+      expect(dp.readFile).toBeCalled();
+      expect(dp.initializeAlbumsWithYears).toBeCalled();
+      expect(dp.setAlbumsDecades).toBeCalled();
+      expect(dp.createDiscographyBoard).toBeCalled();
     });
 
   });
@@ -41,10 +42,11 @@ describe('Discography Processor', () => {
     let expectedResult;
     let fileData;
 
-    beforeAll(async () => {
+    beforeAll(async done => {
       fileData = await dp.readFile();
       expectedResult = fileData.toString().split(/\r?\n/);
-      result = dp.prepareAlbumsWithYears(fileData);
+      result = dp.initializeAlbumsWithYears(fileData);
+      done();
     });
 
     it('should return a list of albums', () => {
@@ -68,9 +70,9 @@ describe('Discography Processor', () => {
           decade: '80',
         }
       ];
-      spyOn(dp, 'prepareAlbumsWithYears').and.returnValue(albumsMock);
+      spyOn(dp, 'initializeAlbumsWithYears').and.returnValue(albumsMock);
       expectedResult = albumsMock.length;
-      result = dp.prepareDecades(albumsMock);
+      result = dp.setAlbumsDecades(albumsMock);
       [sampleAlbum] = result;
     });
 
@@ -87,15 +89,16 @@ describe('Discography Processor', () => {
 
   describe('when create trello board', () => {
     let result;
-    beforeAll(async () => {
-      spyOn(dp.boardsService, 'createAlbumsBoard').and.returnValue({id: '33'});
-      spyOn(dp, 'createBoardList');
-      result = await dp.createTrelloBoard();
+    beforeAll(async done => {
+      spyOn(dp.boardsService, 'createBoard').and.returnValue({id: '33'});
+      spyOn(dp, 'createDecadeList');
+      result = await dp.createDiscographyBoard();
+      done();
     });
 
     it('should create the board', () => {
-      expect(dp.boardsService.createAlbumsBoard).toBeCalled();
-      expect(dp.createBoardList).toBeCalled();
+      expect(dp.boardsService.createBoard).toBeCalled();
+      expect(dp.createDecadeList).toBeCalled();
       expect(result).not.toBeNull();
     });
 
@@ -105,7 +108,7 @@ describe('Discography Processor', () => {
     let result;
     let boardDataMock;
     let albumsMock;
-    beforeAll(async () => {
+    beforeAll(async done => {
       boardDataMock = {id: '33'};
       albumsMock = albumsMock = [
         {
@@ -116,13 +119,14 @@ describe('Discography Processor', () => {
       ];
       dp.albums = albumsMock;
       spyOn(dp.boardsService, 'createBoardList').and.returnValue(boardDataMock);
-      // spyOn(dp, 'createListCard');
-      result = await dp.createBoardList(boardDataMock);
+      // spyOn(dp, 'createDecadeListCards');
+      result = await dp.createDecadeList(boardDataMock);
+      done();
     });
 
     it('should create the board list', () => {
       expect(dp.boardsService.createBoardList).toBeCalled();
-      // expect(dp.createListCard).toBeCalled();
+      // expect(dp.createDecadeListCards).toBeCalled();
       expect(result).not.toBeNull();
     });
 
@@ -132,7 +136,7 @@ describe('Discography Processor', () => {
     let result;
     let listDataMock;
     let albumDecadesMock;
-    beforeAll(async () => {
+    beforeAll(async done => {
       listDataMock = {id: 33};
       albumDecadesMock = [
         {
@@ -142,13 +146,14 @@ describe('Discography Processor', () => {
         }
       ];
       spyOn(dp.boardsService, 'createListCard').and.returnValue({id: '33'});
-      spyOn(dp, 'attachCardImage');
-      result = await dp.createListCard(listDataMock, albumDecadesMock);
+      spyOn(dp, 'tryAddAlbumCover');
+      result = await dp.createDecadeListCards(listDataMock, albumDecadesMock);
+      done();
     });
 
     it('should create the list', () => {
       expect(dp.boardsService.createListCard).toBeCalled();
-      expect(dp.attachCardImage).toBeCalled();
+      expect(dp.tryAddAlbumCover).toBeCalled();
       expect(result).not.toBeNull();
     });
 
@@ -158,7 +163,7 @@ describe('Discography Processor', () => {
     let cardDataMock;
     let spotifyArtistMock;
     let result;
-    beforeAll(async() => {
+    beforeAll(async done => {
       cardDataMock = {id: '33'};
       spotifyArtistMock = {
         albums: {
@@ -174,13 +179,14 @@ describe('Discography Processor', () => {
         }
 
       };
-      spyOn(dp.boardsService, 'attachCardImage').and.returnValue({id: '33'});
-      spyOn(dp.searchService, 'findAlbumByArtist').and.returnValue(spotifyArtistMock);
-      result = await dp.attachCardImage(cardDataMock, 'Query Title');
+      spyOn(dp.boardsService, 'addCardAttachments').and.returnValue({id: '33'});
+      spyOn(dp.searchService, 'findByQueryString').and.returnValue(spotifyArtistMock);
+      result = await dp.tryAddAlbumCover(cardDataMock, 'Query Title');
+      done();
     });
 
     it('should attach the image', () => {
-      expect(dp.boardsService.attachCardImage).toBeCalled();
+      expect(dp.boardsService.addCardAttachments).toBeCalled();
       expect(result).not.toBeNull();
     });
 

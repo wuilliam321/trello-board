@@ -3,16 +3,11 @@ import fs from 'fs';
 export default class FileProcessor {
   fileUri = '';
 
-  async readFile() {
-    try {
-      const fileData = await this.runFsRead();
-      return fileData;
-    } catch (e) {
-      console.error(e)
-    }
-  }
-
-  runFsRead() {
+  /**
+   * Load file data and convert it into a promise
+   * @returns {Promise<any>}
+   */
+  readFile() {
     return new Promise((resolve, reject) => {
       fs.readFile(this.fileUri, (err, data) => {
         if (err) {

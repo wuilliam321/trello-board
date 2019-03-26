@@ -1,45 +1,34 @@
 import axios from 'axios';
+import ErrorHandler from '../lib/error_handler';
 
+/**
+ * A base abstraction of the possible requests to be made
+ */
 export default class Base {
-  async get(url, params = null, headers = null) {
+  async get(url, params, headers) {
+    let response;
     try {
-      return await axios.get(url, { params, headers });
+      response = await axios.get(url, { params, headers });
     } catch (e) {
-      console.error(e);
+      ErrorHandler.log(e);
     }
+
+    return response;
   }
 
-  async post(url, data = null, headers = null, retries = 5) {
+  async post(url, data, headers, retries = 5) {
+    let response;
     try {
-      return await axios.post(url, data, {headers});
+      response = await axios.post(url, data, {headers});
     } catch (e) {
-      console.log('Error retrying: ' + retries);
+      // Retry n times behavior
       if (retries > 0) {
-        console.log('Retry: ' + retries);
-        try {
-          await this.post(url, data, headers,retries - 1);
-        } catch (e) {
-          console.error(e);
-        }
+        response = await this.post(url, data, headers,retries - 1);
       }
-      console.error(e);
+      ErrorHandler.log(e);
     }
 
-  }
+    return response;
 
-  async put(url, data = null, headers = null) {
-    try {
-      return await axios.put(url, data, {headers});
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async delete(url, headers = null) {
-    try {
-      return await axios.delete(url, {headers});
-    } catch (e) {
-      console.error(e);
-    }
   }
 }

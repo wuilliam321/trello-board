@@ -11,8 +11,9 @@ describe('File Processor', () => {
   describe('when a file is going to be loaded', () => {
     let file;
 
-    beforeEach(async () => {
+    beforeEach(async done => {
       file = await fp.readFile();
+      done();
     });
 
     it('should exists', () => {

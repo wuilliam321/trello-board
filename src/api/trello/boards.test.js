@@ -2,6 +2,7 @@ import Boards from './boards';
 
 describe('Boards Service', () => {
   let boardsService;
+
   beforeAll(() => {
     boardsService = new Boards();
   });
@@ -10,10 +11,11 @@ describe('Boards Service', () => {
     let albumsMock;
     let result;
 
-    beforeAll(async () => {
+    beforeAll(async done => {
       albumsMock = [];
       spyOn(boardsService, 'post').and.returnValue({data: {id: '33'}});
-      result = await boardsService.createAlbumsBoard(albumsMock);
+      result = await boardsService.createBoard(albumsMock);
+      done();
     });
 
     it('should prepare albums', () => {
@@ -29,12 +31,12 @@ describe('Boards Service', () => {
     let result;
     let expectedResult;
 
-    beforeAll(async () => {
+    beforeAll(async done => {
       boardId = '33';
       listNameMock = 'Test';
       positionMock = 0;
       expectedResult = {
-        id: "5c9418723a159954b38a06f9",
+        id: '5c9418723a159954b38a06f9',
         name: listNameMock,
         closed: false,
         idBoard: boardId,
@@ -43,6 +45,7 @@ describe('Boards Service', () => {
       };
       spyOn(boardsService, 'post').and.returnValue({data: expectedResult});
       result = await boardsService.createBoardList(boardId, listNameMock, positionMock);
+      done();
     });
 
     it('should create a board list', () => {
@@ -59,12 +62,12 @@ describe('Boards Service', () => {
     let result;
     let expectedResult;
 
-    beforeAll(async () => {
+    beforeAll(async done => {
       listId = '33';
       cardNameMock = 'Test';
       positionMock = 0;
       expectedResult = {
-        id: "5c9418723a159954b38a06f9",
+        id: '5c9418723a159954b38a06f9',
         name: cardNameMock,
         closed: false,
         idList: listId,
@@ -72,6 +75,7 @@ describe('Boards Service', () => {
       };
       spyOn(boardsService, 'post').and.returnValue({data: expectedResult});
       result = await boardsService.createListCard(listId, cardNameMock, positionMock);
+      done();
     });
 
     it('should create a list card', () => {
@@ -81,4 +85,27 @@ describe('Boards Service', () => {
     })
   });
 
+  describe('when add card attachments to card', () => {
+    let cardId;
+    let imageUrlMock;
+    let result;
+    let expectedResult;
+
+    beforeAll(async done => {
+      cardId = '33';
+      imageUrlMock = 'http://';
+      expectedResult = {
+        id: '5c9418723a159954b38a06f9'
+      };
+      spyOn(boardsService, 'post').and.returnValue({data: expectedResult});
+      result = await boardsService.addCardAttachments(cardId, imageUrlMock);
+      done();
+    });
+
+    it('should add an attachment', () => {
+      expect(boardsService.post).toHaveBeenCalled();
+      expect(result).not.toBeNull();
+      expect(result).toBe(expectedResult);
+    })
+  });
 });

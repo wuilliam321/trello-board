@@ -1,8 +1,13 @@
 import Trello from './trello';
+import ErrorHandler from '../../lib/error_handler';
 
+/**
+ * Trello boards implementation (it could be split to get files for each entity)
+ * But leave as is for simplicity
+ */
 export default class Boards extends Trello {
 
-  async createAlbumsBoard(title) {
+  async createBoard(title) {
     try {
       const url = this.apiUrl + 'boards/';
       const params = {
@@ -18,7 +23,7 @@ export default class Boards extends Trello {
         return response.data;
       }
     } catch (e) {
-      console.error(e);
+      ErrorHandler.log(e);
     }
   }
 
@@ -39,7 +44,7 @@ export default class Boards extends Trello {
         return response.data;
       }
     } catch (e) {
-      console.error(e);
+      ErrorHandler.log(e);
     }
   }
 
@@ -60,11 +65,11 @@ export default class Boards extends Trello {
         return response.data;
       }
     } catch (e) {
-      console.error(e);
+      ErrorHandler.log(e);
     }
   }
 
-  async attachCardImage(cardId, imageUrl) {
+  async addCardAttachments(cardId, imageUrl) {
     try {
       const url = this.apiUrl + 'cards/' + cardId + '/attachments';
       const params = {
@@ -80,20 +85,7 @@ export default class Boards extends Trello {
         return response.data;
       }
     } catch (e) {
-      console.error(e);
+      ErrorHandler.log(e);
     }
   }
-
-  // async deleteBoard(boardId) {
-  //   try {
-  //     const url = this.apiUrl + 'boards/' + boardId;
-  //     const headers = this.headers;
-  //     const response = await this.delete(url, headers);
-  //     if (response && response.data) {
-  //       return response.data;
-  //     }
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // }
 }
