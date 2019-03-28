@@ -119,14 +119,14 @@ describe('Discography Processor', () => {
       ];
       dp.albums = albumsMock;
       spyOn(dp.boardsService, 'createBoardList').and.returnValue(boardDataMock);
-      // spyOn(dp, 'createDecadeListCards');
+      spyOn(dp, 'createDecadeListCards');
       result = await dp.createDecadeList(boardDataMock);
       done();
     });
 
     it('should create the board list', () => {
       expect(dp.boardsService.createBoardList).toBeCalled();
-      // expect(dp.createDecadeListCards).toBeCalled();
+      expect(dp.createDecadeListCards).toBeCalled();
       expect(result).not.toBeNull();
     });
 
