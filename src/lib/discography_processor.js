@@ -140,8 +140,8 @@ export default class DiscographyProcessor extends FileProcessor {
 
   getAlbumImage(album) {
     let image;
-    const [firstImage] = album.images;
-    if (firstImage) {
+    if (album && album.images && album.images.length) {
+      const [firstImage] = album.images;
       image = firstImage;
     }
 
